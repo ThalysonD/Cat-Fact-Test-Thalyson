@@ -120,7 +120,7 @@ export default {
 
 .refresh-button {
   margin-top: 20px;
-  margin-bottom: -140px;
+  margin-bottom: -170px;
   position: relative;
 }
 
