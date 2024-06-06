@@ -23,20 +23,20 @@
       <div class="flex flex-row items-start space-x-4 ml-auto images-container">
         <img
           v-if="images.length > 0"
-          :src="images[0]"
+          :src="images[0].url"
           alt="Cat Image"
           class="rounded-lg shadow-lg large-image"
         />
         <div class="flex flex-col space-y-4">
           <img
             v-if="images.length > 1"
-            :src="images[1]"
+            :src="images[1].url"
             alt="Cat Image"
             class="rounded-lg shadow-lg small-image"
           />
           <img
             v-if="images.length > 2"
-            :src="images[2]"
+            :src="images[2].url"
             alt="Cat Image"
             class="rounded-lg shadow-lg small-image"
           />
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 export default {
   setup() {
@@ -55,19 +55,28 @@ export default {
       "Cat families usually play best in <br> even numbers. Cats and kittens <br> should be acquired in pairs <br> whenever possible."
     );
     const images = ref([
-      "/images/kitty1.webp",
-      "/images/kitty2.webp",
-      "/images/kitty3.webp",
+      { url: "/images/kitty1.webp" },
+      { url: "/images/kitty2.webp" },
+      { url: "/images/kitty3.webp" },
     ]);
 
     const fetchCatFact = async () => {
       try {
-        const fact = await this.$meowFacts.getFact();
-        catFact.value = fact;
+        const factResponse = await fetch("https://meowfacts.herokuapp.com/");
+        const factData = await factResponse.json();
+        catFact.value = factData.data[0];
+
+        const imagesResponse = await fetch(
+          "https://api.thecatapi.com/v1/images/search?limit=3"
+        );
+        const imagesData = await imagesResponse.json();
+        images.value = imagesData;
       } catch (error) {
-        console.error("Error fetching cat fact:", error);
+        console.error("Error fetching data:", error);
       }
     };
+
+    onMounted(fetchCatFact);
 
     return {
       catFact,
@@ -87,7 +96,8 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: flex-start;
   height: 100%;
 }
 
@@ -102,12 +112,16 @@ export default {
 }
 
 .cat-fact-text {
-  margin-top: 60px;
+  margin-top: 20px;
+  min-height: 200px; /* Define uma altura mínima para o texto */
+  max-height: 200px; /* Define uma altura máxima para o texto */
+  overflow: hidden; /* Esconde o excesso de texto */
 }
 
 .refresh-button {
-  margin-top: 60px;
-  margin-bottom: 40px;
+  margin-top: 20px;
+  margin-bottom: -140px;
+  position: relative;
 }
 
 .material-icons {
@@ -116,14 +130,17 @@ export default {
 
 .large-image {
   width: 630px;
-  height: auto;
-  margin-right: 20px
+  height: 600px;
+  margin-right: 20px;
+  margin-top: 20px;
+  object-fit: cover;
 }
 
 .small-image {
-  width: 270px;
-  height: auto;
-  margin-top: 25px;
+  width: 330px;
+  height: 240px;
+  margin-top: 70px;
+  object-fit: cover;
 }
 
 .images-container {
