@@ -48,8 +48,4 @@ $ npm run generate
 - **Store**: `/store`
 - **Styles**: `/assets/css/tailwind.css`
 
-### Deployment
-
-- Deployed on Vercel
-
 For more detailed information, refer to the [Nuxt.js documentation](https://nuxtjs.org/docs).
