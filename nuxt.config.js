@@ -1,6 +1,9 @@
+// nuxt.config.js
 export default {
   css: ["@/assets/css/tailwind.css"],
   buildModules: ["@nuxtjs/tailwindcss"],
+  modules: ["@nuxtjs/composition-api/module"],
+  plugins: ["~/plugins/meowFacts.js", "~/plugins/pinia.js"],
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -19,5 +22,4 @@ export default {
       },
     ],
   },
-  plugins: ["~/plugins/meowFacts.js"],
 };

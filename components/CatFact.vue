@@ -1,90 +1,83 @@
 <template>
   <div class="min-h-screen flex flex-col items-center bg-beige font-jost">
     <div class="bg-navy text-off-white w-full py-12 header">
-      <h1 class="text-center text-6xl">THE DEFSAFE CAT FACTS PAGE</h1>
+      <h1 class="text-center text-4xl md:text-6xl">
+        THE DEFSAFE CAT FACTS PAGE
+      </h1>
     </div>
-    <div class="flex flex-row mt-8 w-3/4">
+    <div class="flex flex-col md:flex-row mt-8 w-full md:w-3/4">
       <div class="flex-1 p-6 relative content">
         <div class="cat-fact-title">
-          <h2 class="text-navy text-5xl mb-4">CAT FACT:</h2>
+          <h2 class="text-navy text-3xl md:text-5xl mb-4">CAT FACT:</h2>
         </div>
-        <div class="cat-fact-text">
-          <p class="text-purple text-4xl mb-6" v-html="catFact"></p>
-        </div>
+        <transition name="fade">
+          <div key="fact-{{ currentFact }}" class="cat-fact-text">
+            <p
+              class="text-purple text-xl md:text-4xl mb-6"
+              v-html="currentFact"
+            ></p>
+          </div>
+        </transition>
         <button
-          @click="fetchCatFact"
-          class="flex items-center justify-center bg-purple text-off-white px-9 py-5 rounded-lg shadow-lg hover:bg-navy transition-all duration-300 refresh-button"
-          style="width: 500px"
+          @click="fetchCatData"
+          class="flex items-center justify-center bg-purple text-off-white px-6 py-3 md:px-9 md:py-5 rounded-lg shadow-lg hover:bg-navy transition-all duration-300 refresh-button"
         >
           <span class="material-icons mr-2">autorenew</span>
           GET A RANDOM CAT FACT
         </button>
       </div>
-      <div class="flex flex-row items-start space-x-4 ml-auto images-container">
-        <img
-          v-if="images.length > 0"
-          :src="images[0].url"
-          alt="Cat Image"
-          class="rounded-lg shadow-lg large-image"
-        />
+      <div
+        class="flex flex-row items-start space-x-4 md:ml-auto images-container"
+      >
+        <transition name="fade" mode="out-in">
+          <img
+            v-if="images.length > 0"
+            :key="images[0].url"
+            :src="images[0].url"
+            alt="Cat Image"
+            class="rounded-lg shadow-lg large-image"
+          />
+        </transition>
         <div class="flex flex-col space-y-4">
-          <img
-            v-if="images.length > 1"
-            :src="images[1].url"
-            alt="Cat Image"
-            class="rounded-lg shadow-lg small-image"
-          />
-          <img
-            v-if="images.length > 2"
-            :src="images[2].url"
-            alt="Cat Image"
-            class="rounded-lg shadow-lg small-image"
-          />
+          <transition name="fade" mode="out-in">
+            <img
+              v-if="images.length > 1"
+              :key="images[1].url"
+              :src="images[1].url"
+              alt="Cat Image"
+              class="rounded-lg shadow-lg small-image"
+            />
+          </transition>
+          <transition name="fade" mode="out-in">
+            <img
+              v-if="images.length > 2"
+              :key="images[2].url"
+              :src="images[2].url"
+              alt="Cat Image"
+              class="rounded-lg shadow-lg small-image"
+            />
+          </transition>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import { ref, onMounted } from "vue";
+<script setup>
+import { onMounted, computed } from "@nuxtjs/composition-api";
+import { useCatStore } from "~/store/catStore";
 
-export default {
-  setup() {
-    const catFact = ref(
-      "Cat families usually play best in <br> even numbers. Cats and kittens <br> should be acquired in pairs <br> whenever possible."
-    );
-    const images = ref([
-      { url: "/images/kitty1.webp" },
-      { url: "/images/kitty2.webp" },
-      { url: "/images/kitty3.webp" },
-    ]);
+const store = useCatStore();
 
-    const fetchCatFact = async () => {
-      try {
-        const factResponse = await fetch("https://meowfacts.herokuapp.com/");
-        const factData = await factResponse.json();
-        catFact.value = factData.data[0];
-
-        const imagesResponse = await fetch(
-          "https://api.thecatapi.com/v1/images/search?limit=3"
-        );
-        const imagesData = await imagesResponse.json();
-        images.value = imagesData;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    onMounted(fetchCatFact);
-
-    return {
-      catFact,
-      images,
-      fetchCatFact,
-    };
-  },
+const fetchCatData = async () => {
+  await store.fetchCatFact();
+  await store.fetchCatImages();
 };
+
+onMounted(fetchCatData);
+
+const currentFact = computed(() => store.currentFact);
+const images = computed(() => store.images);
 </script>
 
 <style scoped>
@@ -113,9 +106,9 @@ export default {
 
 .cat-fact-text {
   margin-top: 20px;
-  min-height: 200px; /* Define uma altura mínima para o texto */
-  max-height: 200px; /* Define uma altura máxima para o texto */
-  overflow: hidden; /* Esconde o excesso de texto */
+  min-height: 200px;
+  max-height: 200px;
+  overflow: hidden;
 }
 
 .refresh-button {
@@ -129,16 +122,15 @@ export default {
 }
 
 .large-image {
-  width: 630px;
-  height: 600px;
-  margin-right: 20px;
+  width: 100%;
+  height: auto;
   margin-top: 20px;
   object-fit: cover;
 }
 
 .small-image {
-  width: 330px;
-  height: 240px;
+  width: 100%;
+  height: auto;
   margin-top: 70px;
   object-fit: cover;
 }
@@ -147,9 +139,24 @@ export default {
   margin-right: -140px;
 }
 
-.flex.flex-col.space-y-4 {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+
+@media (min-width: 768px) {
+  .large-image {
+    width: 630px;
+    height: 600px;
+    margin-right: 20px;
+  }
+
+  .small-image {
+    width: 330px;
+    height: 240px;
+  }
 }
 </style>
