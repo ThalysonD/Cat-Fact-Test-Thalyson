@@ -1,5 +1,5 @@
 {
-  "name": "CatTest-DefSafe-Thalyson",
+  "name": "cat-test-def-safe-thalyson",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -10,9 +10,13 @@
     "test": "jest"
   },
   "dependencies": {
+    "@nuxt/http": "^0.6.4",
+    "@nuxtjs/composition-api": "^0.34.0",
+    "@pinia/nuxt": "^0.5.1",
     "axios": "^1.7.2",
     "core-js": "^3.25.3",
     "nuxt": "^2.17.3",
+    "pinia": "^2.1.7",
     "vue": "^2.7.10",
     "vue-server-renderer": "^2.7.10",
     "vue-template-compiler": "^2.7.10"
