@@ -10,12 +10,14 @@
         <div class="cat-fact-title">
           <h2 class="text-navy text-3xl md:text-5xl mb-4">CAT FACT:</h2>
         </div>
-        <div class="cat-fact-text">
-          <p
-            class="text-purple text-xl md:text-4xl mb-6"
-            v-html="currentFact"
-          ></p>
-        </div>
+        <transition name="fade">
+          <div key="fact-{{ currentFact }}" class="cat-fact-text">
+            <p
+              class="text-purple text-xl md:text-4xl mb-6"
+              v-html="currentFact"
+            ></p>
+          </div>
+        </transition>
         <button
           @click="fetchCatData"
           class="flex items-center justify-center bg-purple text-off-white px-6 py-3 md:px-9 md:py-5 rounded-lg shadow-lg hover:bg-navy transition-all duration-300 refresh-button"
@@ -27,25 +29,34 @@
       <div
         class="flex flex-row items-start space-x-4 md:ml-auto images-container"
       >
-        <img
-          v-if="images.length > 0"
-          :src="images[0].url"
-          alt="Cat Image"
-          class="rounded-lg shadow-lg large-image"
-        />
+        <transition name="fade" mode="out-in">
+          <img
+            v-if="images.length > 0"
+            :key="images[0].url"
+            :src="images[0].url"
+            alt="Cat Image"
+            class="rounded-lg shadow-lg large-image"
+          />
+        </transition>
         <div class="flex flex-col space-y-4">
-          <img
-            v-if="images.length > 1"
-            :src="images[1].url"
-            alt="Cat Image"
-            class="rounded-lg shadow-lg small-image"
-          />
-          <img
-            v-if="images.length > 2"
-            :src="images[2].url"
-            alt="Cat Image"
-            class="rounded-lg shadow-lg small-image"
-          />
+          <transition name="fade" mode="out-in">
+            <img
+              v-if="images.length > 1"
+              :key="images[1].url"
+              :src="images[1].url"
+              alt="Cat Image"
+              class="rounded-lg shadow-lg small-image"
+            />
+          </transition>
+          <transition name="fade" mode="out-in">
+            <img
+              v-if="images.length > 2"
+              :key="images[2].url"
+              :src="images[2].url"
+              alt="Cat Image"
+              class="rounded-lg shadow-lg small-image"
+            />
+          </transition>
         </div>
       </div>
     </div>
@@ -126,6 +137,14 @@ const images = computed(() => store.images);
 
 .images-container {
   margin-right: -140px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
 }
 
 @media (min-width: 768px) {

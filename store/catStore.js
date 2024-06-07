@@ -1,4 +1,3 @@
-// store/catStore.js
 import { defineStore } from "pinia";
 import { getCatFact, getCatImages } from "~/services/api";
 
@@ -14,8 +13,17 @@ export const useCatStore = defineStore("catStore", {
         this.facts.length === 0 ||
         this.currentFactIndex >= this.facts.length - 1
       ) {
-        const fact = await getCatFact();
-        this.facts.push(fact);
+        if (this.facts.length === 0) {
+          const facts = await Promise.all([
+            getCatFact(),
+            getCatFact(),
+            getCatFact(),
+          ]);
+          this.facts.push(...facts);
+        } else {
+          const fact = await getCatFact();
+          this.facts.push(fact);
+        }
         this.currentFactIndex = this.facts.length - 1;
       } else {
         this.currentFactIndex++;
