@@ -29,3 +29,4 @@ $ npm run generate
 - **Material Icons**: Icons
 
 For more details, refer to the [Nuxt.js documentation](https://nuxtjs.org).
+```
