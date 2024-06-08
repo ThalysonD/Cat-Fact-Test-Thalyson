@@ -4,6 +4,11 @@ export default {
   buildModules: ["@nuxtjs/tailwindcss"],
   modules: ["@nuxtjs/composition-api/module"],
   plugins: ["~/plugins/meowFacts.js", "~/plugins/pinia.js"],
+  target: "static",
+  ssr: false,
+  generate: {
+    fallback: true,
+  },
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -22,4 +27,8 @@ export default {
       },
     ],
   },
+  // server: {
+  //   port: process.env.PORT || 3000,
+  //   host: '0.0.0.0'
+  // }
 };
